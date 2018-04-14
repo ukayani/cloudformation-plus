@@ -86,3 +86,12 @@ To convert from a YAML document with anchors/aliases to an equivalent document w
 ```bash
 $ cf-plus --resolve-aliases myfile.yml
 ``` 
+
+
+# YAML Parsing Code
+
+This tool uses code from [go-yaml](https://github.com/go-yaml/yaml) to parse/marshal YAML.
+
+Since this tool needs to work directly with a YAML AST (which is not exposed by go-yaml), it modifies the go-yaml codebase:
+ - adds an event initialization function for outputting alias nodes
+ - adds additional fields to the AST node to preserve more information about the source document
