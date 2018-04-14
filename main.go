@@ -2,51 +2,52 @@ package main
 
 import (
 	"github.com/ukayani/cloudformation-plus/yaml"
+	"flag"
 	"fmt"
+	"os"
+	"io/ioutil"
 )
 
-func walk(node *yaml.Node) {
-	switch kind := node.Kind; kind {
-	case yaml.AliasNode:
-		fmt.Println(node.Alias.Value)
-	case yaml.ScalarNode:
-		fmt.Println(node.Value)
-	}
-	for _, c := range node.Children {
-		walk(c)
+
+func failf(err error) {
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }
+
+func printUsage() {
+	flag.Usage()
+	os.Exit(1)
+}
+
 func main() {
-	var data = `
-a: &test !Ref 'a string from struct A'
-b: !Ref 'a string from struct B'
-c: &hi
- c1: test
- c2: another
-cP: &hi2
- inner:
-  <<: *hi
- c1: testP
- c3: testP3
-d: &howdy
-- Testing: !Ref 'Hello'
-- Another: {"test":"hello"}
-e: *hi
-f:
- <<: *hi2
- in: hello
-`
+	var removeAliases = flag.Bool("resolve-aliases", false, "Resolve all aliases to their target nodes")
 
-	var node = yaml.GetTree([]byte(data))
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage of: %s [source]\n", os.Args[0])
+		flag.PrintDefaults()
+	}
 
-	walk(node)
+	flag.Parse()
 
-	node.Children[0].Children[1].Tag = "!Hello"
-	var enc = yaml.NewNodeEncoder()
-	defer enc.Destroy()
-	enc.MarshalDoc(node, true)
-	enc.Finish()
-	println("Dumping node")
-	print(string(enc.Out))
+	if len(flag.Args()) < 1 {
+		printUsage()
+	}
+
+	path := flag.Arg(0)
+
+	data,err := ioutil.ReadFile(path)
+
+	failf(err)
+
+	node, err := yaml.UnmarshalToTree([]byte(data), false)
+
+	failf(err)
+
+	out, err := yaml.MarshalFromTree(node, *removeAliases)
+
+	failf(err)
+	print(string(out))
 
 }

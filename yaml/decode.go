@@ -33,17 +33,13 @@ type Node struct {
 }
 
 // ----------------------------------------------------------------------------
-// Parser, produces a Node tree Out of a libyaml event stream.
+// Parser, produces a Node tree out of a libyaml event stream.
 
 type parser struct {
 	parser   yaml_parser_t
 	event    yaml_event_t
 	doc      *Node
 	doneInit bool
-}
-
-func GetTree(b []byte) *Node {
-	return newParser(b).parse()
 }
 
 func newParser(b []byte) *parser {
@@ -293,7 +289,7 @@ func (d *decoder) callUnmarshaler(n *Node, u Unmarshaler) (good bool) {
 
 // d.prepare initializes and dereferences pointers and calls UnmarshalYAML
 // if a Value is found to implement it.
-// It returns the initialized and dereferenced Out Value, whether
+// It returns the initialized and dereferenced out Value, whether
 // unmarshalling was already done by UnmarshalYAML, and if so whether
 // its types unmarshalled appropriately.
 //
@@ -414,7 +410,7 @@ func (d *decoder) scalar(n *Node, out reflect.Value) bool {
 			} else {
 				// We let any Value be unmarshaled into TextUnmarshaler.
 				// That might be more lax than we'd like, but the
-				// TextUnmarshaler itself should bowl Out any dubious values.
+				// TextUnmarshaler itself should bowl out any dubious values.
 				text = []byte(n.Value)
 			}
 			err := u.UnmarshalText(text)
@@ -530,7 +526,7 @@ func (d *decoder) scalar(n *Node, out reflect.Value) bool {
 		}
 	case reflect.Ptr:
 		if out.Type().Elem() == reflect.TypeOf(resolved) {
-			// TODO DOes this make sense? When is Out a Ptr except when decoding a nil Value?
+			// TODO DOes this make sense? When is out a Ptr except when decoding a nil Value?
 			elem := reflect.New(out.Type().Elem())
 			elem.Elem().Set(reflect.ValueOf(resolved))
 			out.Set(elem)

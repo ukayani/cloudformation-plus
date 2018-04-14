@@ -123,7 +123,7 @@ func resolve(tag string, in string) (rtag string, out interface{}) {
 
 		// Base 60 floats are a bad idea, were dropped in YAML 1.2, and
 		// are purposefully unsupported here. They're still quoted on
-		// the way Out for compatibility with other parser, though.
+		// the way out for compatibility with other parser, though.
 
 		switch hint {
 		case 'M':

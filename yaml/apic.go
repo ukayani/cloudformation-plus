@@ -32,7 +32,7 @@ func yaml_parser_initialize(parser *yaml_parser_t) bool {
 	return true
 }
 
-// Destroy a parser object.
+// destroy a parser object.
 func yaml_parser_delete(parser *yaml_parser_t) {
 	*parser = yaml_parser_t{}
 }
@@ -89,7 +89,7 @@ func yaml_emitter_initialize(emitter *yaml_emitter_t) {
 	}
 }
 
-// Destroy an emitter object.
+// destroy an emitter object.
 func yaml_emitter_delete(emitter *yaml_emitter_t) {
 	*emitter = yaml_emitter_t{}
 }
@@ -165,7 +165,7 @@ func yaml_emitter_set_break(emitter *yaml_emitter_t, line_break yaml_break_t) {
 }
 
 ///*
-// * Destroy a token object.
+// * destroy a token object.
 // */
 //
 //YAML_DECLARE(void)
@@ -373,7 +373,7 @@ func yaml_mapping_end_event_initialize(event *yaml_event_t) {
 	}
 }
 
-// Destroy an event object.
+// destroy an event object.
 func yaml_event_delete(event *yaml_event_t) {
 	*event = yaml_event_t{}
 }
@@ -466,7 +466,7 @@ func yaml_event_delete(event *yaml_event_t) {
 //}
 //
 ///*
-// * Destroy a document object.
+// * destroy a document object.
 // */
 //
 //YAML_DECLARE(void)

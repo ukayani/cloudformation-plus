@@ -2,10 +2,10 @@ package yaml
 
 import "io"
 
-type NodeEncoder struct {
+type nodeEncoder struct {
 	emitter yaml_emitter_t
 	event   yaml_event_t
-	Out     []byte
+	out     []byte
 	flow    bool
 	// doneInit holds whether the initial stream_start_event has been
 	// emitted.
@@ -13,23 +13,23 @@ type NodeEncoder struct {
 	removeAliases bool
 }
 
-func NewNodeEncoder() *NodeEncoder {
-	e := &NodeEncoder{}
+func newNodeEncoder() *nodeEncoder {
+	e := &nodeEncoder{}
 	yaml_emitter_initialize(&e.emitter)
-	yaml_emitter_set_output_string(&e.emitter, &e.Out)
+	yaml_emitter_set_output_string(&e.emitter, &e.out)
 	yaml_emitter_set_unicode(&e.emitter, true)
 	return e
 }
 
-func newNodeEncoderWithWriter(w io.Writer) *NodeEncoder {
-	e := &NodeEncoder{}
+func newNodeEncoderWithWriter(w io.Writer) *nodeEncoder {
+	e := &nodeEncoder{}
 	yaml_emitter_initialize(&e.emitter)
 	yaml_emitter_set_output_writer(&e.emitter, w)
 	yaml_emitter_set_unicode(&e.emitter, true)
 	return e
 }
 
-func (e *NodeEncoder) init() {
+func (e *nodeEncoder) init() {
 	if e.doneInit {
 		return
 	}
@@ -38,22 +38,22 @@ func (e *NodeEncoder) init() {
 	e.doneInit = true
 }
 
-func (e *NodeEncoder) Finish() {
+func (e *nodeEncoder) finish() {
 	e.emitter.open_ended = false
 	yaml_stream_end_event_initialize(&e.event)
 	e.emit()
 }
 
-func (e *NodeEncoder) Destroy() {
+func (e *nodeEncoder) destroy() {
 	yaml_emitter_delete(&e.emitter)
 }
 
-func (e *NodeEncoder) emit() {
+func (e *nodeEncoder) emit() {
 	// This will internally delete the e.event Value.
 	e.must(yaml_emitter_emit(&e.emitter, &e.event))
 }
 
-func (e *NodeEncoder) must(ok bool) {
+func (e *nodeEncoder) must(ok bool) {
 	if !ok {
 		msg := e.emitter.problem
 		if msg == "" {
@@ -63,7 +63,7 @@ func (e *NodeEncoder) must(ok bool) {
 	}
 }
 
-func (e *NodeEncoder) MarshalDoc(in *Node, removeAliases bool) {
+func (e *nodeEncoder) marshalDoc(in *Node, removeAliases bool) {
 	e.init()
 	e.removeAliases = removeAliases
 	e.must(in.Kind == DocumentNode)
@@ -76,7 +76,7 @@ func (e *NodeEncoder) MarshalDoc(in *Node, removeAliases bool) {
 	e.emit()
 }
 
-func (e *NodeEncoder) marshal(in *Node) {
+func (e *nodeEncoder) marshal(in *Node) {
 
 	switch in.Kind {
 	case MappingNode:
@@ -90,7 +90,7 @@ func (e *NodeEncoder) marshal(in *Node) {
 	}
 }
 
-func (e *NodeEncoder) emitMapping(in *Node) {
+func (e *nodeEncoder) emitMapping(in *Node) {
 	implicit := in.Tag == ""
 	anchor := ""
 
@@ -132,7 +132,7 @@ func (e *NodeEncoder) emitMapping(in *Node) {
 	e.emit()
 }
 
-func (e *NodeEncoder) merge(a *Node, b *Node) {
+func (e *nodeEncoder) merge(a *Node, b *Node) {
 	switch b.Kind {
 	case MappingNode:
 		e.mergeMapping(a, b)
@@ -145,7 +145,7 @@ func (e *NodeEncoder) merge(a *Node, b *Node) {
 	}
 }
 
-func (e *NodeEncoder) mergeMapping(a *Node, b *Node) {
+func (e *nodeEncoder) mergeMapping(a *Node, b *Node) {
 	var keyMap = make(map[string]bool)
 	var la = len(a.Children)
 	for i := 0; i < la; i += 2 {
@@ -165,7 +165,7 @@ func (e *NodeEncoder) mergeMapping(a *Node, b *Node) {
 	}
 }
 
-func (e *NodeEncoder) mergeSequence(a *Node, b *Node) {
+func (e *nodeEncoder) mergeSequence(a *Node, b *Node) {
 	for _, c := range b.Children {
 		switch c.Kind {
 		case AliasNode:
@@ -181,7 +181,7 @@ func (e *NodeEncoder) mergeSequence(a *Node, b *Node) {
 	}
 }
 
-func (e *NodeEncoder) emitSequence(in *Node) {
+func (e *nodeEncoder) emitSequence(in *Node) {
 	implicit := in.Tag == ""
 
 	anchor := ""
@@ -202,7 +202,7 @@ func (e *NodeEncoder) emitSequence(in *Node) {
 
 }
 
-func (e *NodeEncoder) emitAlias(in *Node) {
+func (e *nodeEncoder) emitAlias(in *Node) {
 	if e.removeAliases {
 		e.marshal(in.Alias)
 		return
@@ -212,7 +212,7 @@ func (e *NodeEncoder) emitAlias(in *Node) {
 	e.emit()
 }
 
-func (e *NodeEncoder) emitScalar(in *Node) {
+func (e *nodeEncoder) emitScalar(in *Node) {
 	tag := in.Tag
 
 	anchor := ""

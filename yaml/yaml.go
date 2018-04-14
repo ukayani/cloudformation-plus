@@ -44,15 +44,15 @@ type Marshaler interface {
 }
 
 // Unmarshal decodes the first document found within the in byte slice
-// and assigns decoded values into the Out Value.
+// and assigns decoded values into the out Value.
 //
-// Maps and pointers (to a struct, string, int, etc) are accepted as Out
+// Maps and pointers (to a struct, string, int, etc) are accepted as out
 // values. If an internal pointer within a struct is not initialized,
 // the yaml package will initialize it if necessary for unmarshalling
-// the provided data. The Out parameter must not be nil.
+// the provided data. The out parameter must not be nil.
 //
 // The type of the decoded values should be compatible with the respective
-// values in Out. If one or more values cannot be decoded due to a type
+// values in out. If one or more values cannot be decoded due to a type
 // mismatches, decoding continues partially until the end of the YAML
 // content, and a *yaml.TypeError is returned with details for all
 // missed values.

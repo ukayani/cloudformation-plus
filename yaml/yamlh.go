@@ -407,11 +407,11 @@ type yaml_document_t struct {
 // source. The handler should write not more than size bytes to the buffer.
 // The number of written bytes should be set to the size_read variable.
 //
-// [in,Out]   data        A pointer to an application data specified by
+// [in,out]   data        A pointer to an application data specified by
 //                        yaml_parser_set_input().
-// [Out]      buffer      The buffer to write the data from the source.
+// [out]      buffer      The buffer to write the data from the source.
 // [in]       size        The size of the buffer.
-// [Out]      size_read   The actual number of bytes read from the source.
+// [out]      size_read   The actual number of bytes read from the source.
 //
 // On success, the handler should return 1.  If the handler failed,
 // the returned Value should be 0. On EOF, the handler should set the
@@ -602,7 +602,7 @@ type yaml_parser_t struct {
 // characters to the output.  The handler should write @a size bytes of the
 // @a buffer to the output.
 //
-// @param[in,Out]   data        A pointer to an application data specified by
+// @param[in,out]   data        A pointer to an application data specified by
 //                              yaml_emitter_set_output().
 // @param[in]       buffer      The buffer with bytes to be written.
 // @param[in]       size        The size of the buffer.
