@@ -1,0 +1,28 @@
+SecurityGroup1:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: 'My First Security Group'
+      GroupDescription: 'Allows my instance external access'
+      VpcId: !Ref 'VPCId'
+      Tags: &tags
+        - Key: Project
+          Value: !Ref 'Project'
+        - Key: Team
+          Value: !Ref 'Team'
+        - Key: Environment
+          Value: !Ref 'Environment'
+      SecurityGroupEgress:
+        IpProtocol: -1
+        CidrIp: "0.0.0.0/0"
+SecurityGroup2:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: 'My : First Security Group'
+      GroupDescription: 'Allows access to my instance'
+      SecurityGroupIngress:
+        - CidrIp: "0.0.0.0/0"
+          IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+      VpcId: !Ref 'VPCId'
+      Tags: *tags
