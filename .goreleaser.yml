@@ -17,4 +17,4 @@ archive:
     darwin: macOS
     linux: Tux
   files:
-    - cf-plus.licence.txt
+    - LICENSE
