@@ -30,7 +30,21 @@ type Node struct {
 	Children []*Node
 	Anchors  map[string]*Node // For document, to search up aliases
 	Anchor string
+	style yaml_style_t
 }
+
+func (n *Node) mappingStyle() yaml_mapping_style_t {
+	return yaml_mapping_style_t(n.style)
+}
+
+func (n *Node) sequenceStyle() yaml_sequence_style_t {
+	return yaml_sequence_style_t(n.style)
+}
+
+func (n *Node) scalarStyle() yaml_scalar_style_t {
+	return yaml_scalar_style_t(n.style)
+}
+
 
 // ----------------------------------------------------------------------------
 // Parser, produces a Node tree out of a libyaml event stream.
@@ -165,6 +179,7 @@ func (p *parser) node(kind int) *Node {
 		Kind:   kind,
 		line:   p.event.start_mark.line,
 		column: p.event.start_mark.column,
+		style: p.event.style,
 	}
 }
 

@@ -8,11 +8,11 @@ func UnmarshalToTree(in []byte, strict bool) (node *Node, err error) {
 	return
 }
 
-func MarshalFromTree(in *Node, removeAliases bool) (out []byte, err error) {
+func MarshalFromTree(in *Node, removeAliases bool, normalize bool) (out []byte, err error) {
 	defer handleErr(&err)
 	e := newNodeEncoder()
 	defer e.destroy()
-	e.marshalDoc(in, removeAliases)
+	e.marshalDoc(in, removeAliases, normalize)
 	e.finish()
 	out = e.out
 	return

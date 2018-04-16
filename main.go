@@ -23,6 +23,8 @@ func printUsage() {
 
 func main() {
 	var removeAliases = flag.Bool("resolve-aliases", false, "Resolve all aliases to their target nodes")
+	var keepStyle = flag.Bool("keep-style", false,
+		"Keep YAML style from source document. Default is to normalize (block style with quotes removed where they can be)")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of: %s <source> [dest]\n", os.Args[0])
@@ -45,7 +47,7 @@ func main() {
 
 	failf(err)
 
-	out, err := yaml.MarshalFromTree(node, *removeAliases)
+	out, err := yaml.MarshalFromTree(node, *removeAliases, !*keepStyle)
 
 	failf(err)
 
