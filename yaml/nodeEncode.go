@@ -11,6 +11,7 @@ type nodeEncoder struct {
 	// emitted.
 	doneInit bool
 	removeAliases bool
+	normalize bool
 }
 
 func newNodeEncoder() *nodeEncoder {
@@ -63,9 +64,10 @@ func (e *nodeEncoder) must(ok bool) {
 	}
 }
 
-func (e *nodeEncoder) marshalDoc(in *Node, removeAliases bool) {
+func (e *nodeEncoder) marshalDoc(in *Node, removeAliases bool, normalize bool) {
 	e.init()
 	e.removeAliases = removeAliases
+	e.normalize = normalize
 	e.must(in.Kind == DocumentNode)
 	yaml_document_start_event_initialize(&e.event, nil, nil, true)
 	e.emit()
@@ -98,7 +100,13 @@ func (e *nodeEncoder) emitMapping(in *Node) {
 		anchor = in.Anchor
 	}
 
-	yaml_mapping_start_event_initialize(&e.event, []byte(anchor), []byte(in.Tag), implicit, yaml_BLOCK_MAPPING_STYLE)
+	style := yaml_BLOCK_MAPPING_STYLE
+
+	if !e.normalize {
+		style = in.mappingStyle()
+	}
+
+	yaml_mapping_start_event_initialize(&e.event, []byte(anchor), []byte(in.Tag), implicit, style)
 	e.emit()
 
 	// first pass through keys of this map to see if any are special merge keys
@@ -190,7 +198,12 @@ func (e *nodeEncoder) emitSequence(in *Node) {
 		anchor = in.Anchor
 	}
 
-	yaml_sequence_start_event_initialize(&e.event, []byte(anchor), []byte(in.Tag), implicit, yaml_BLOCK_SEQUENCE_STYLE)
+	style := yaml_BLOCK_SEQUENCE_STYLE
+	if !e.normalize {
+		style = in.sequenceStyle()
+	}
+
+	yaml_sequence_start_event_initialize(&e.event, []byte(anchor), []byte(in.Tag), implicit, style)
 	e.emit()
 
 	for _,c := range in.Children {
@@ -221,12 +234,19 @@ func (e *nodeEncoder) emitScalar(in *Node) {
 		anchor = in.Anchor
 	}
 
-	value := in.Value
-	implicit := tag == ""
 	style := yaml_ANY_SCALAR_STYLE
+	implicit := tag == ""
+
 	if !implicit {
 		style = yaml_SINGLE_QUOTED_SCALAR_STYLE
 	}
+
+	if !e.normalize {
+		style = in.scalarStyle()
+	}
+
+	value := in.Value
+
 	e.must(yaml_scalar_event_initialize(&e.event, []byte(anchor), []byte(tag), []byte(value), implicit, implicit, style))
 	e.emit()
 }
