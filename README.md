@@ -95,3 +95,4 @@ This tool uses code from [go-yaml](https://github.com/go-yaml/yaml) to parse/mar
 Since this tool needs to work directly with a YAML AST (which is not exposed by go-yaml), it modifies the go-yaml codebase:
  - adds an event initialization function for outputting alias nodes
  - adds additional fields to the AST node to preserve more information about the source document
+ - adds a marshaller that goes from the YAML AST to a document
