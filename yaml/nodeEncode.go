@@ -154,12 +154,13 @@ func (e *nodeEncoder) merge(a *Node, b *Node) {
 }
 
 func (e *nodeEncoder) mergeMapping(a *Node, b *Node) {
-	var keyMap = make(map[string]bool)
+	var keyMap = make(map[string]*Node)
 	var la = len(a.Children)
 	for i := 0; i < la; i += 2 {
 		key := a.Children[i]
+		value := a.Children[i + 1]
 		if key.Kind == ScalarNode {
-			keyMap[key.Value] = true
+			keyMap[key.Value] = value
 		}
 	}
 
@@ -167,8 +168,18 @@ func (e *nodeEncoder) mergeMapping(a *Node, b *Node) {
 	for i := 0; i < lb; i += 2 {
 		key := b.Children[i]
 		value := b.Children[i + 1]
-		if key.Kind != ScalarNode || !keyMap[key.Value] {
+
+		// get the corresponding key in the source node A
+		sourceChild, keyExistsInSource := keyMap[key.Value]
+
+		// if it is a scalar key and it doesn't exist in the source node, just include it
+		if key.Kind != ScalarNode || !keyExistsInSource {
 			a.Children = append(a.Children, key, value)
+		}
+
+		// deep merge
+		if keyExistsInSource && sourceChild.Kind == MappingNode && value.Kind == MappingNode {
+			e.mergeMapping(sourceChild, value)
 		}
 	}
 }

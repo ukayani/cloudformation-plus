@@ -14,6 +14,11 @@ YAML file which is supported by Cloud Formation.
 - Supports use of YAML anchors and aliases
 - Supports use of YAML merge keys (similar to an extends relationship in OOP)
 
+## Installation
+
+```
+$ curl https://raw.githubusercontent.com/ukayani/cloudformation-plus/master/install.sh | bash -s -- -b /usr/local/bin 
+```
 
 ## Example Using Aliases
 

@@ -1,0 +1,19 @@
+Resource1: &resource
+  Type: 'AWS::CloudFormation::Stack'
+  Properties:
+    TemplateURL: ./service.yaml
+    Parameters:
+      Id: 1
+      Name: !Sub '${AWS::StackName}-component'
+      ClientPort: !Ref 'ClientPort'
+      Prop1: !Ref 'SomeParam'
+      Prop2: 'blah'
+      Prop3: 'blah3'
+      Prop4: 'blah4'
+      SubnetId: !Select [ 0, !Ref 'Subnets' ]
+Broker2:
+  <<: *resource
+  Properties:
+    Parameters:
+      Id: 2
+      SubnetId: !Select [ 1, !Ref 'Subnets' ]
