@@ -16,9 +16,14 @@ YAML file which is supported by Cloud Formation.
 
 ## Installation
 
-```
+The below command will install `cf-plus` to your bin directory. 
+It will require root permissions so you may need to run with `sudo`
+
+```bash
 $ curl https://raw.githubusercontent.com/ukayani/cloudformation-plus/master/install.sh | bash -s -- -b /usr/local/bin 
 ```
+
+**Note**: Leaving out the `-b /usr/local/bin` portion will install the utility to `./bin`
 
 ## Example Using Aliases
 
